@@ -1,19 +1,21 @@
-const winston = require("winston");
-const { GELFTransport } = require("winston-gelf");
+const { createLogger, transports, format } = require("winston");
+const GelfTransport = require("winston-gelf");
 
-const logger = winston.createLogger({
+const logger = createLogger({
+  level: "info",
+  format: format.json(),
   transports: [
-    new GELFTransport({
+    new transports.Console(),
+    new GelfTransport({
       gelfPro: {
-        adapterName: "http",  // Sends logs over HTTP
+        adapterName: "udp",
         adapterOptions: {
-          host: "your-graylog-server-ip",  // Replace with your Graylog server IP or domain
-          port: 12201,
-        },
-      },
-    }),
-    new winston.transports.Console(), // Keep console logging for debugging
-  ],
+          host: "127.0.0.1", // Update to your Graylog server if needed
+          port: 12201
+        }
+      }
+    })
+  ]
 });
 
 module.exports = logger;

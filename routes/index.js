@@ -1,13 +1,19 @@
 const express = require("express");
-const logger = require("../logger"); // Import the logger
+const logger = require("../logger");
 const userRouter = require("./user");
 const accountRouter = require("./account");
 
 const router = express.Router();
 
-// Log incoming requests
 router.use((req, res, next) => {
-  logger.info(`Incoming request: ${req.method} ${req.originalUrl}`, { body: req.body });
+  const start = Date.now();
+  res.on("finish", () => {
+    const duration = Date.now() - start;
+    logger.info(`Request: ${req.method} ${req.originalUrl}`, {
+      status: res.statusCode,
+      duration: `${duration}ms`,
+    });
+  });
   next();
 });
 
